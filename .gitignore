@@ -2,3 +2,4 @@ node_modules/*
 package-lock.json
 clear.js
 .directory
+config.json
