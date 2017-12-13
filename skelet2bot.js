@@ -66,21 +66,21 @@ bot.command("danbooru", ({ message, reply, replyWithPhoto }) => {
 		})
 		.then(postInfo => {
 			const file = postInfo.file;
+			const caption = `Post ID: ${postInfo.id}\n` + 
+			`Artist: ${postInfo.tags.artist}\n` +
+			`Characters: ${postInfo.tags.character}\n` +
+			`Copyright info: ${postInfo.tags.copyright}`;
 			if(!("request" in file))
-				reply("image unavailable");
-			else replyWithPhoto(`https://danbooru.donmai.us/data/${file.name}`)
+				reply("image unavailable\n" + caption);
+			else replyWithPhoto(`https://danbooru.donmai.us/data/${file.name}`, { caption })
 				.catch(function(e) {
 					if(e.toString().includes("400"))
-						replyWithPhoto(`https://danbooru.donmai.us/cached/data/${file.name}`);
+						replyWithPhoto(`https://danbooru.donmai.us/cached/data/${file.name}`, { caption });
 					else {
 						errors += e + " (image unavailable)\n";
 						reply(errors);
 					}
-				})
-				.then(reply(`Post ID: ${postInfo.id}\n` + 
-				`Artist: ${postInfo.tags.artist}\n` +
-				`Characters: ${postInfo.tags.character}\n` +
-				`Copyright info: ${postInfo.tags.copyright}`));
+				});
 		})
 		.catch(function(e) {
 			errors += e + "\n";
@@ -183,12 +183,10 @@ bot.on("photo", ({ message, tg }) => {
 	if (message.from.username == undefined)
 		caption = message.chat.title + "\n" + message.from.first_name + " " + message.from.last_name + ": " + message.caption;
 	if(message.chat.id == "-1001144567507"){
-		tg.sendPhoto("-1001064029829", message.photo[0].file_id, [caption]);
-		tg.sendMessage("-1001064029829", caption);
+		tg.sendPhoto("-1001064029829", message.photo[0].file_id, { caption });
 	} else {
-		tg.sendPhoto("-1001144567507", message.photo[0].file_id, [caption]);
-		tg.sendMessage("-1001144567507", caption);
-	};
+		tg.sendPhoto("-1001144567507", message.photo[0].file_id, { caption });
+	}
 });
 
 bot.on("video", ({ message, tg }) => {
@@ -196,14 +194,11 @@ bot.on("video", ({ message, tg }) => {
 	if (message.from.username == undefined)
 		caption = message.chat.title + "\n" + message.from.first_name + " " + message.from.last_name + ": " + message.caption;
 	if(message.chat.id == "-1001144567507"){
-		tg.sendVideo("-1001064029829", message.video.file_id, [caption]);
-		tg.sendMessage("-1001064029829", caption);
+		tg.sendVideo("-1001064029829", message.video.file_id, { caption });
 	} else {
-		tg.sendVideo("-1001144567507", message.video.file_id, [caption]);
-		tg.sendMessage("-1001144567507", caption);
-	};
-})
-*/
+		tg.sendVideo("-1001144567507", message.video.file_id, { caption });
+	}
+});
 let id = "-1001144567507";
 rl.prompt();
 rl.on("line", (line) => {
